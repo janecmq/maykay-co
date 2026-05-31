@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>maykay.co — jane chang</title>
+<meta name="description" content="jane chang (maykay 美琪) — innovation lead by day, vibe coder by night. little AI experiments built between meetings and bedtime battles." />
+<meta property="og:title" content="maykay.co — jane chang" />
+<meta property="og:description" content="innovation lead by day, vibe coder by night. little AI experiments." />
+<meta property="og:type" content="website" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23F1EDE2'/><circle cx='32' cy='32' r='13' fill='%23D4FF4F'/></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+html, body { margin: 0; padding: 0; height: 100%; background: var(--paper, #ECEEF2); }
+#root, .stage { width: 100%; height: 100%; }
+.stage { position: fixed; inset: 0; }
+.stage .scene { position: absolute; inset: 0; }
+
+/* ============================================================
+   maykay.co — landing playground
+   Shared tokens + motion.
+   ============================================================ */
+
+:root {
+  --accent: #D4FF4F;
+  --accent-ink: #1A1C10;
+  --paper: #F1EDE2;
+  --display: 'Instrument Serif', Georgia, serif;
+  --sans: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'Space Mono', ui-monospace, monospace;
+  --ink:    #1A1813;
+  --ink-70: #4A463C;
+  --ink-45: #8A8475;
+  --ink-25: #C4BEAF;
+  --card:   #FBF9F2;
+  --line:   rgba(26,24,19,0.12);
+  --tint-peach: #F2DCC4;
+  --tint-sky:   #D4E2EA;
+  --tint-blush: #EFD6D2;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.scene {
+  position: relative;
+  width: 100%; height: 100%;
+  background: var(--paper);
+  font-family: var(--sans);
+  color: var(--ink);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.scene * { box-sizing: border-box; }
+
+/* subtle paper grain */
+.scene::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* ---- top chrome ---- */
+.topbar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 34px 48px;
+}
+.wordmark {
+  font-family: var(--display); font-size: 25px; letter-spacing: 0.01em;
+  color: var(--ink); display: inline-flex; align-items: baseline; gap: 2px;
+}
+.wordmark .dot { color: var(--ink-45); }
+.topnav { display: flex; align-items: center; gap: 26px; }
+.topnav a {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+  text-transform: lowercase; color: var(--ink-70); text-decoration: none;
+  position: relative; transition: color .2s ease;
+}
+.topnav a::after {
+  content: ''; position: absolute; left: 0; right: 100%; bottom: -4px; height: 2px;
+  background: var(--accent); transition: right .28s cubic-bezier(.2,.7,.3,1);
+}
+.topnav a:hover { color: var(--ink); }
+.topnav a:hover::after { right: 0; }
+
+/* ---- statement type ---- */
+.statement {
+  font-family: var(--display); font-weight: 400; color: var(--ink);
+  line-height: 1.04; letter-spacing: -0.01em;
+  position: relative; isolation: isolate;
+}
+.statement em { font-style: italic; }
+
+/* highlighter swipe */
+.hl {
+  display: inline-block; white-space: nowrap; color: var(--ink);
+  background: var(--accent);
+  padding: 0.02em 0.12em 0.04em;
+  border-radius: 5px 9px 6px 10px;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  transform: rotate(-1.3deg); transform-origin: center;
+  box-shadow: 0 1px 0 rgba(26,24,19,0.05);
+}
+
+/* underline-doodle accent */
+.uline { position: relative; white-space: nowrap; }
+.uline .uline-svg svg { z-index: -1; }
+.uline svg { position: absolute; left: -2%; bottom: -0.34em; width: 104%; height: 0.4em; overflow: visible; }
+.uline svg path { stroke: var(--accent); stroke-width: 7; fill: none; stroke-linecap: round; }
+
+.subline {
+  font-family: var(--sans); color: var(--ink-70); font-weight: 400;
+  line-height: 1.5;
+}
+.eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-45);
+}
+
+/* ---- experiment cards ---- */
+.band-wrap {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: min(100%, 960px); height: 100%; z-index: 10; pointer-events: none;
+}
+.band-wrap .exp-pos { pointer-events: auto; }
+.exp-pos { position: absolute; z-index: 10; will-change: transform; }
+.exp-float { animation: drift var(--dur,7s) ease-in-out var(--del,0s) infinite; }
+.exp-card {
+  position: relative; width: var(--w, 212px);
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 15px; padding: 15px 16px 16px;
+  box-shadow: 0 1px 2px rgba(26,24,19,.05), 0 14px 30px -12px rgba(26,24,19,.22);
+  transform: rotate(var(--rot, 0deg));
+  transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
+  cursor: pointer;
+}
+.exp-card:hover {
+  transform: rotate(0deg) translateY(-5px) scale(1.035);
+  box-shadow: 0 1px 2px rgba(26,24,19,.05), 0 26px 46px -16px rgba(26,24,19,.32);
+  z-index: 40;
+}
+.exp-card.tint-peach { background: var(--tint-peach); }
+.exp-card.tint-sky   { background: var(--tint-sky); }
+.exp-card.tint-lime  { background: color-mix(in oklab, var(--accent) 42%, var(--card)); }
+
+.exp-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
+.tag {
+  font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 999px;
+  background: var(--ink); color: var(--paper); white-space: nowrap;
+}
+.tag.live  { background: var(--accent); color: var(--accent-ink); }
+.tag.ghost { background: transparent; color: var(--ink-45); border: 1px solid var(--line); }
+.exp-glyph { color: var(--ink-45); flex: 0 0 auto; }
+.exp-title {
+  font-family: var(--sans); font-weight: 600; font-size: 16.5px; letter-spacing: -0.01em;
+  color: var(--ink); line-height: 1.15; margin-bottom: 5px;
+}
+.exp-blurb { font-family: var(--sans); font-size: 12.5px; line-height: 1.42; color: var(--ink-70); }
+.exp-open {
+  margin-top: 11px; display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: lowercase;
+  color: var(--ink-45); opacity: 0; transform: translateY(3px);
+  transition: opacity .25s ease, transform .25s ease;
+}
+.exp-card:hover .exp-open { opacity: 1; transform: translateY(0); }
+
+/* ---- floating pill label ---- */
+.pill {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em;
+  padding: 7px 14px; border-radius: 999px; background: var(--card);
+  border: 1px solid var(--line); color: var(--ink); white-space: nowrap;
+  box-shadow: 0 6px 18px -8px rgba(26,24,19,.25); display: inline-flex; align-items: center; gap: 7px;
+}
+.pill .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--accent); }
+
+/* ---- doodles ---- */
+.doodle { position: absolute; z-index: 8; color: var(--ink); pointer-events: none; }
+.doodle.accent { color: var(--accent); }
+.doodle svg { display: block; overflow: visible; }
+.doodle path, .doodle line, .doodle circle { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.spin    { animation: spin 16s linear infinite; }
+.twinkle { animation: twinkle 3.4s ease-in-out infinite; }
+
+/* ---- glow ---- */
+.glow {
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, var(--accent) 0%, color-mix(in oklab, var(--accent) 55%, transparent) 34%, transparent 68%);
+  filter: blur(20px); opacity: 0.92; transform-origin: center;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+.glow-wrap { position: absolute; z-index: 2; pointer-events: none; }
+
+/* ---- footer ---- */
+.foot {
+  position: absolute; left: 48px; right: 48px; bottom: 30px; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--mono); font-size: 11px; color: var(--ink-45); letter-spacing: 0.03em;
+}
+.foot a { color: var(--ink-70); text-decoration: none; transition: color .2s ease; }
+.foot a:hover { color: var(--ink); }
+
+/* scroll cue */
+.cue { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.cue .stem { width: 1.5px; height: 46px; background: var(--ink-25); }
+.cue .ring { width: 13px; height: 13px; border: 1.5px solid var(--ink-45); border-radius: 999px; animation: bob 2.2s ease-in-out infinite; }
+
+/* ============ keyframes ============ */
+@keyframes drift {
+  0%   { transform: translateY(0) rotate(var(--rot,0deg)); }
+  50%  { transform: translateY(-13px) rotate(calc(var(--rot,0deg) + 0.6deg)); }
+  100% { transform: translateY(0) rotate(var(--rot,0deg)); }
+}
+@keyframes glowPulse {
+  0%,100% { transform: scale(1); opacity: 0.78; }
+  50%     { transform: scale(1.09); opacity: 0.95; }
+}
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes twinkle { 0%,100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.25); opacity: 1; } }
+@keyframes bob     { 0%,100% { transform: translateY(0); opacity:.5; } 50% { transform: translateY(8px); opacity:1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .exp-float, .glow, .spin, .twinkle, .cue .ring { animation: none !important; }
+}
+
+/* ============================================================
+   MOBILE — reflow fixed canvas into vertical scroll
+   ============================================================ */
+@media (max-width: 700px) {
+  html, body { height: auto !important; min-height: 100%; }
+
+  .stage { position: static !important; inset: auto !important; height: auto !important; min-height: 100dvh; }
+  .stage .scene {
+    position: relative !important; inset: auto !important;
+    height: auto !important; min-height: 100dvh; overflow: visible !important;
+    display: flex; flex-direction: column;
+    padding-bottom: 30px;
+  }
+
+  .topbar {
+    position: static !important;
+    flex-direction: column !important; align-items: center !important;
+    gap: 14px; padding: 22px 20px 6px !important;
+  }
+  .topbar .wordmark {
+    position: static !important; left: auto !important; transform: none !important;
+    order: -1; font-size: 22px;
+  }
+  .topbar .topnav {
+    flex-direction: row !important; align-items: center !important;
+    gap: 22px; flex-wrap: wrap; justify-content: center;
+  }
+  .topbar .topnav a { font-size: 12px; padding: 6px 2px; }
+  .topbar .pill { font-size: 12px; padding: 9px 18px; }
+
+  .scene > [data-depth="0.4"] {
+    position: static !important; top: auto !important; left: auto !important; right: auto !important;
+    transform: none !important; padding: 18px 22px 4px !important;
+  }
+  .statement { font-size: 26px !important; line-height: 1.24 !important; }
+  .scene > [data-depth="0.4"] .eyebrow { margin-top: 18px !important; }
+
+  .band-wrap { display: contents; }
+  .exp-pos {
+    position: static !important; left: auto !important; top: auto !important;
+    transform: none !important; opacity: 1 !important;
+    width: 100% !important; max-width: 340px; margin: 0 auto;
+    display: flex; justify-content: center; padding: 8px 22px;
+  }
+  .exp-float { animation: none !important; transform: none !important; width: 100%; }
+  .exp-card {
+    width: 100% !important; transform: none !important;
+    box-shadow: 0 1px 2px rgba(26,24,19,.05), 0 10px 24px -14px rgba(26,24,19,.28) !important;
+  }
+  .exp-open { opacity: 1 !important; transform: none !important; }
+  .exp-pos:has(.pill) { padding: 4px 22px; }
+
+  .foot {
+    position: static !important; left: auto !important; right: auto !important; bottom: auto !important;
+    flex-direction: column; gap: 6px; text-align: center;
+    margin-top: 26px; padding: 0 22px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- ── Tweaks Panel ─────────────────────────────────────────── -->
+<script type="text/babel">
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;overflow-wrap:anywhere}
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight  = Math.max(PAD, window.innerWidth  - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight,  Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right  = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode')   setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight  = window.innerWidth  - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight  - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup',  up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup',   up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-omelette-chrome=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ label, children }) {
+  return (<><div className="twk-sect">{label}</div>{children}</>);
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup',   up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup',   up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup',   up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup',   up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>{sup.map((c, j) => <i key={j} style={{ background: c }} />)}</span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+</script>
+
+<!-- ── Directions (DirA / DirB / DirC) ───────────────────────── -->
+<script type="text/babel">
+const EXPERIMENTS = [
+  { id: 'pantry',  tag: 'LIVE',    live: true,  title: 'miles.maximiser', blurb: 'Maximise miles hacking on credit cards that I have on hand.',    glyph: 'plate', href: 'https://miles.maykay.co',  bg: '#F7F2FB' },
+  { id: 'haiku',   tag: 'LIVE',    live: true,  title: 'avery & bagel',   blurb: 'A pixel art platformer featuring my toddler and dog.',           glyph: 'cloud', href: 'https://bae.maykay.co/',   bg: '#FFF5D0' },
+  { id: 'distil',  tag: 'WIP',     ghost: true, title: 'coming soon',     blurb: 'coming soon',                                                   glyph: 'spark' },
+  { id: 'palette', tag: 'WIP',     ghost: true, title: 'coming soon',     blurb: 'coming soon',                                                   glyph: 'wave',  bg: '#FBF9F2' },
+  { id: 'doodle',  tag: 'WIP',     ghost: true, title: 'coming soon',     blurb: 'coming soon',                                                   glyph: 'arrow' },
+  { id: 'cake',    tag: 'FOR FUN', ghost: true, title: 'bae vs bae',      blurb: 'A platformer pixel art game of my toddler vs dog.',              glyph: 'star',  tint: 'tint-peach' },
+  { id: 'muse',    tag: 'NEW',                  title: 'midnight muse',   blurb: 'A tiny journal that quietly writes back to you at 1am.',         glyph: 'moon' },
+];
+
+function popBubbles() {
+  if (!document.getElementById('bubble-kf')) {
+    const st = document.createElement('style');
+    st.id = 'bubble-kf';
+    st.textContent = '@keyframes bubbleFloat{0%{transform:translateY(0) scale(.3);opacity:0}12%{opacity:.95}100%{transform:translateY(-118vh) scale(1);opacity:0}}';
+    document.head.appendChild(st);
+  }
+  const fills = ['var(--accent)', '#ffffff', 'rgba(255,255,255,.55)'];
+  const N = 28;
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('div');
+    const size = 10 + Math.random() * 46;
+    b.style.cssText = 'position:fixed;bottom:-70px;left:' + Math.random() * 100 + 'vw;width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + fills[i % fills.length] + ';border:1.5px solid rgba(0,0,0,.06);box-shadow:0 2px 10px rgba(0,0,0,.06);pointer-events:none;z-index:9999;animation:bubbleFloat ' + (3 + Math.random() * 3).toFixed(2) + 's ease-in forwards;animation-delay:' + (Math.random() * 0.6).toFixed(2) + 's';
+    document.body.appendChild(b);
+    setTimeout(function() { b.remove(); }, 7200);
+  }
+}
+
+const LINKS = {
+  linkedin:  'https://www.linkedin.com/in/janecmq/',
+  instagram: 'https://www.instagram.com/maykayco',
+  email:     'mailto:janecmq@gmail.com',
+};
+
+function Glyph({ name, size = 19 }) {
+  const p = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' };
+  const paths = {
+    plate: <g {...p}><circle cx="10" cy="10" r="8.2" /><circle cx="10" cy="10" r="3.4" /></g>,
+    cloud: <path {...p} d="M5 13h9a3 3 0 0 0 .2-6A4.2 4.2 0 0 0 6 7.5 3.2 3.2 0 0 0 5 13Z" />,
+    spark: <path {...p} d="M10 2c.6 4.5 3.5 7.4 8 8-4.5.6-7.4 3.5-8 8-.6-4.5-3.5-7.4-8-8 4.5-.6 7.4-3.5 8-8Z" />,
+    wave:  <path {...p} d="M2 10c2-4 3.2 4 5 0s3.2 4 5 0 3.2 4 6 0" />,
+    arrow: <g {...p}><path d="M3 14C6 6 12 4 17 5" /><path d="M12.5 4.2 17 5l-1.4 4.4" /></g>,
+    star:  <path {...p} d="M10 2.5l2.2 4.8 5.3.5-4 3.6 1.2 5.2L10 14l-4.7 2.6 1.2-5.2-4-3.6 5.3-.5Z" />,
+    moon:  <path {...p} d="M14.5 12.5A6.2 6.2 0 0 1 7.5 5.5a6.2 6.2 0 1 0 7 7Z" />,
+  };
+  return <svg width={size} height={size} viewBox="0 0 20 20" style={{ display: 'block' }}>{paths[name] || paths.spark}</svg>;
+}
+
+function Doodle({ kind, size = 40, accent, className = '', spin, twinkle, style }) {
+  const cls = 'doodle' + (accent ? ' accent' : '') + (spin ? ' spin' : '') + (twinkle ? ' twinkle' : '') + (className ? ' ' + className : '');
+  const marks = {
+    sparkle:  <path d="M12 1c.7 6 4 9.3 10 10-6 .7-9.3 4-10 10-.7-6-4-9.3-10-10C8 10.3 11.3 7 12 1Z" />,
+    star4:    <path d="M12 2l2 7 7 3-7 3-2 7-2-7-7-3 7-3Z" />,
+    arrow:    <g><path d="M2 17C7 7 16 4 22 6" /><path d="M16 4l6 2-2 6" /></g>,
+    loop:     <path d="M2 14c0-7 9-10 14-6s-1 12-5 9 1-11 7-9 6 7 4 11" />,
+    asterisk: <g><line x1="12" y1="2" x2="12" y2="22" /><line x1="2" y1="12" x2="22" y2="12" /><line x1="4.5" y1="4.5" x2="19.5" y2="19.5" /><line x1="19.5" y1="4.5" x2="4.5" y2="19.5" /></g>,
+    squiggle: <path d="M2 12c3-5 5 5 8 0s5 5 8 0" />,
+    plus:     <g><line x1="12" y1="3" x2="12" y2="21" /><line x1="3" y1="12" x2="21" y2="12" /></g>,
+  };
+  return (
+    <span className={cls} style={style}>
+      <svg width={size} height={size} viewBox="0 0 24 24">{marks[kind] || marks.sparkle}</svg>
+    </span>
+  );
+}
+
+const ULine = () =>
+  <span className="uline-svg">
+    <svg viewBox="0 0 200 12" preserveAspectRatio="none"
+         style={{ position: 'absolute', left: '-2%', bottom: '-0.3em', width: '104%', height: '0.42em', overflow: 'visible' }}>
+      <path d="M3 7C40 2 80 10 120 5s60-3 77 2"
+            fill="none" stroke="var(--accent)" strokeWidth="7" strokeLinecap="round"
+            style={{ stroke: 'rgb(212, 255, 79)' }} />
+    </svg>
+  </span>;
+
+function Exp({ item, x, y, rot = 0, depth = 1, w = 212, faded }) {
+  const tagCls = 'tag' + (item.live ? ' live' : item.ghost ? ' ghost' : '');
+  const dur = (6 + item.id.charCodeAt(0) % 5 * 0.7).toFixed(1) + 's';
+  const del = '-' + (item.id.charCodeAt(1) % 6 * 0.8).toFixed(1) + 's';
+  const Card = item.href ? 'a' : 'div';
+  const cardProps = item.href ? { href: item.href, target: '_blank', rel: 'noopener' } : {};
+  return (
+    <div className="exp-pos" data-depth={depth} style={{ left: `${x}%`, top: `${y}%`, opacity: faded ? 0.62 : 1 }}>
+      <div className="exp-float" style={{ '--dur': dur, '--del': del }}>
+        <Card {...cardProps} className={'exp-card' + (item.tint ? ' ' + item.tint : '')}
+              style={{ '--rot': `${rot}deg`, '--w': `${w}px`, textDecoration: 'none', display: 'block', background: item.bg }}>
+          <div className="exp-top">
+            <span className={tagCls}
+                  style={item.live
+                    ? { color: 'var(--accent-ink)', backgroundColor: 'var(--accent)' }
+                    : { color: 'rgb(0,0,0)', backgroundColor: 'rgb(251,249,242)' }}>
+              {item.tag}
+            </span>
+            <span className="exp-glyph"><Glyph name={item.glyph} /></span>
+          </div>
+          <div className="exp-title">{item.title}</div>
+          <div className="exp-blurb">{item.blurb}</div>
+          <span className="exp-open">
+            open <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <path d="M2 7L7 2M3 2h4v4" />
+            </svg>
+          </span>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function TopBar({ center }) {
+  if (center) {
+    return (
+      <div className="topbar" style={{ justifyContent: 'center' }}>
+        <span className="wordmark">maykay<span className="dot">.co</span></span>
+      </div>
+    );
+  }
+  return (
+    <div className="topbar">
+      <span className="wordmark">maykay<span className="dot">.co</span></span>
+      <nav className="topnav">
+        <a href="#work">work</a>
+        <a href={LINKS.linkedin} target="_blank" rel="noopener">linkedin</a>
+        <a href={LINKS.instagram} target="_blank" rel="noopener">instagram</a>
+        <a href="#hello">say hi</a>
+      </nav>
+    </div>
+  );
+}
+
+function Foot({ note }) {
+  return (
+    <div className="foot">
+      <span>jane · maykay.co</span>
+      <span>{note || '© 2026 · made with curiosity'}</span>
+    </div>
+  );
+}
+
+function useParallax(ref) {
+  React.useEffect(() => {
+    const root = ref.current; if (!root) return;
+    let raf = 0, tx = 0, ty = 0, cx = 0, cy = 0;
+    const layers = () => root.querySelectorAll('[data-depth]');
+    const onMove = (e) => {
+      const r = root.getBoundingClientRect();
+      tx = (e.clientX - r.left) / r.width  - 0.5;
+      ty = (e.clientY - r.top)  / r.height - 0.5;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const onLeave = () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); };
+    const tick = () => {
+      cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+      layers().forEach((el) => {
+        const d = parseFloat(el.dataset.depth) || 1;
+        el.style.transform = `translate(${(-cx * 26 * d).toFixed(2)}px, ${(-cy * 22 * d).toFixed(2)}px)`;
+      });
+      raf = Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001 ? requestAnimationFrame(tick) : 0;
+    };
+    root.addEventListener('pointermove', onMove);
+    root.addEventListener('pointerleave', onLeave);
+    return () => { root.removeEventListener('pointermove', onMove); root.removeEventListener('pointerleave', onLeave); cancelAnimationFrame(raf); };
+  }, [ref]);
+}
+
+function densityConf(d) {
+  if (d === 'compact') return { n: 4, k: 0.84 };
+  if (d === 'spread')  return { n: 6, k: 1.14 };
+  return { n: 5, k: 1 };
+}
+const ex = (v, c, k) => c + (v - c) * k;
+
+/* ============================================================
+   DIRECTION A — Studio Wall
+   ============================================================ */
+function DirA({ density = 'regular' }) {
+  const ref = React.useRef(null);
+  useParallax(ref);
+  const { n, k } = densityConf(density);
+
+  const base = [
+    { x:  5.5, y: 20, rot: -5, depth: 1.5, w: 206 },
+    { x: 74,   y: 13, rot:  4, depth: 1.2, w: 196 },
+    { x:  2,   y: 55, rot:  3, depth: 1.7, w: 212 },
+    { x: 78.5, y: 50, rot: -4, depth: 1.4, w: 208 },
+    { x: 13,   y: 74, rot:  5, depth: 1.9, w: 200 },
+    { x: 70,   y: 75, rot: -3, depth: 1.6, w: 214 },
+    { x: 40.5, y:  6, rot:  2, depth: 1.0, w: 188 },
+  ];
+  const cards = base.slice(0, n).map((b, i) => ({ ...b, item: EXPERIMENTS[i] }));
+
+  return (
+    <div className="scene" ref={ref}>
+      <TopBar />
+      <Doodle kind="sparkle" size={34} accent twinkle style={{ left: '33%', top: '27%' }} />
+      <Doodle kind="arrow"   size={48} style={{ right: '30%', top: '24%', transform: 'rotate(8deg)' }} />
+      <Doodle kind="asterisk" size={26} style={{ left: '30%', top: '70%' }} />
+      <Doodle kind="squiggle" size={44} style={{ right: '33%', top: '70%' }} />
+
+      <div data-depth="0.45" style={{ position: 'absolute', left: '50%', top: '49%', transform: 'translate(-50%,-50%)', width: 'min(620px,56%)', textAlign: 'center', zIndex: 20 }}>
+        <div className="eyebrow" style={{ marginBottom: 18 }}>hi, i'm jane chang</div>
+        <h1 className="statement" style={{ fontSize: 'clamp(40px,4.4vw,58px)' }}>
+          Innovation Lead by day,<br /><span className="hl">AI vibe coder</span> by night.
+        </h1>
+        <p className="subline" style={{ marginTop: 22, fontSize: 18, maxWidth: 430, marginLeft: 'auto', marginRight: 'auto' }}>
+          Sharing my little <em style={{ fontFamily: 'var(--display)', fontSize: '1.08em' }}>experiments</em> here — the things I build after hours.
+        </p>
+      </div>
+
+      {cards.map((c, i) =>
+        <Exp key={c.item.id} item={c.item} w={c.w} rot={c.rot} depth={c.depth}
+             x={ex(c.x, 41, k)} y={ex(c.y, 44, k)} />
+      )}
+      <Foot />
+    </div>
+  );
+}
+
+/* ============================================================
+   DIRECTION B — Gallery  (the chosen direction)
+   ============================================================ */
+function DirB({ density = 'regular' }) {
+  const ref = React.useRef(null);
+  useParallax(ref);
+  const { n } = densityConf(density);
+  const bandN = Math.min(n, 6);
+
+  const band = [
+    { x:  2, y: 58, rot: -4, depth: 1.3, w: 198 },
+    { x: 19, y: 67, rot:  3, depth: 1.6, w: 196 },
+    { x: 37, y: 60, rot: -2, depth: 1.1, w: 202 },
+    { x: 55, y: 68, rot:  4, depth: 1.7, w: 198 },
+    { x: 73, y: 58, rot: -3, depth: 1.3, w: 206 },
+    { x: 40, y: 44, rot:  2, depth: 1.0, w: 184 },
+    { x: 10, y: 49, rot: -3, depth: 1.0, w: 184 },
+  ];
+  const cards = band.slice(0, bandN).map((b, i) => ({ ...b, item: EXPERIMENTS[i] }));
+
+  return (
+    <div className="scene" ref={ref}>
+      {/* chrome: left vertical nav + center wordmark + right pill */}
+      <div className="topbar" style={{ alignItems: 'flex-start' }}>
+        <nav className="topnav" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 7 }}>
+          <a href={LINKS.instagram} target="_blank" rel="noopener">instagram →</a>
+          <a href={LINKS.linkedin}  target="_blank" rel="noopener">linkedin →</a>
+          <a href="#hello" onClick={(e) => { e.preventDefault(); popBubbles(); }}>hello</a>
+        </nav>
+        <span className="wordmark" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <Doodle kind="asterisk" size={16} accent style={{ position: 'static' }} /> maykay<span className="dot">.co</span>
+        </span>
+        <a href={LINKS.email} className="pill" style={{ textDecoration: 'none', background: 'var(--accent)', color: 'var(--accent-ink)', border: 'none' }}>say hi →</a>
+      </div>
+
+      {/* headline */}
+      <div data-depth="0.4" style={{ position: 'absolute', left: 0, right: 0, top: '14%', textAlign: 'center', zIndex: 20, padding: '0 6%' }}>
+        <h1 className="statement" style={{ fontSize: 'clamp(30px,3.8vw,52px)', lineHeight: 1.18, maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>
+          hi, i'm <strong>jane</strong> / <span className="uline" style={{ position: 'relative' }}><em>maykay</em><ULine /></span> (美琪)
+          <Doodle kind="star4" size={22} accent twinkle style={{ position: 'static', display: 'inline-block', verticalAlign: 'super', marginLeft: 6 }} />
+          <br />
+          innovation lead by day. full-time mom. i vibe code little experiments after my toddler goes to bed.
+        </h1>
+        <p className="eyebrow" style={{ marginTop: 26, fontSize: 12 }}>brain dump here ↓</p>
+      </div>
+
+      <div className="band-wrap">
+        {cards.map((c) => <Exp key={c.item.id} item={c.item} w={c.w} rot={c.rot} depth={c.depth} x={c.x} y={c.y} />)}
+        {/* floating pills */}
+        <div className="exp-pos" data-depth="2.1" style={{ left: '30%', top: '55%' }}>
+          <span className="pill"><span className="dot"></span>after-hours</span>
+        </div>
+        <div className="exp-pos" data-depth="1.9" style={{ left: '63%', top: '52%' }}>
+          <span className="pill" style={{ backgroundColor: 'rgb(255,235,225)' }}>built with claude</span>
+        </div>
+      </div>
+
+      <Foot note="singapore · gmt+8" />
+    </div>
+  );
+}
+
+/* ============================================================
+   DIRECTION C — Spotlight
+   ============================================================ */
+function DirC({ density = 'regular' }) {
+  const ref = React.useRef(null);
+  useParallax(ref);
+  const { n } = densityConf(density);
+  const orbitN = Math.min(Math.max(n - 2, 3), 4);
+
+  const orbit = [
+    { x:  4, y: 24, rot: -6, depth: 2.2, w: 188 },
+    { x: 78, y: 20, rot:  5, depth: 2.0, w: 182 },
+    { x:  6, y: 66, rot:  4, depth: 2.4, w: 186 },
+    { x: 76, y: 67, rot: -5, depth: 2.1, w: 184 },
+  ];
+  const cards = orbit.slice(0, orbitN).map((b, i) => ({ ...b, item: EXPERIMENTS[i] }));
+
+  return (
+    <div className="scene" ref={ref}>
+      <TopBar center />
+      <Doodle kind="plus" size={20} style={{ left: 48, bottom: 64 }} />
+      <Doodle kind="plus" size={20} style={{ right: 48, top: 96 }} />
+
+      <div className="glow-wrap" style={{ left: '50%', top: '46%', width: 560, height: 560, transform: 'translate(-50%,-50%)' }}>
+        <div className="glow" style={{ width: '100%', height: '100%' }}></div>
+      </div>
+
+      <div data-depth="0.5" style={{ position: 'absolute', left: '50%', top: '47%', transform: 'translate(-50%,-50%)', textAlign: 'center', zIndex: 20, width: 'min(760px,72%)' }}>
+        <h1 className="statement" style={{ fontSize: 'clamp(42px,4.8vw,64px)', lineHeight: 1.08 }}>
+          Innovation Lead by day,<br />
+          <em>AI vibe coder</em> by night.
+        </h1>
+        <p className="subline" style={{ marginTop: 20, fontSize: 18, fontFamily: 'var(--display)', fontStyle: 'italic', color: 'var(--ink-70)' }}>
+          sharing my little experiments here
+        </p>
+      </div>
+
+      {cards.map((c) =>
+        <Exp key={c.item.id} item={c.item} w={c.w} rot={c.rot} depth={c.depth} x={c.x} y={c.y} faded />
+      )}
+
+      <div style={{ position: 'absolute', left: '50%', bottom: 34, transform: 'translateX(-50%)', zIndex: 25 }}>
+        <div className="cue"><div className="stem"></div><div className="ring"></div></div>
+      </div>
+
+      <div className="foot">
+        <a href={LINKS.linkedin}  target="_blank" rel="noopener">linkedin</a>
+        <a href={LINKS.instagram} target="_blank" rel="noopener">instagram</a>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { EXPERIMENTS, Glyph, Doodle, Exp, TopBar, Foot, DirA, DirB, DirC });
+</script>
+
+<!-- ── App ───────────────────────────────────────────────────── -->
+<script type="text/babel">
+const { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakSelect, TweakRadio } = window;
+
+const FONTS = {
+  'Instrument Serif':   "'Instrument Serif', Georgia, serif",
+  'DM Serif Display':   "'DM Serif Display', Georgia, serif",
+  'Playfair Display':   "'Playfair Display', Georgia, serif",
+  'Libre Baskerville':  "'Libre Baskerville', Georgia, serif",
+};
+const ACCENTS = ['#D4FF4F', '#2A6EEB', '#FF6B35', '#00B4D8'];
+const PAPERS  = ['#F1EDE2', '#EFEEE8', '#F4ECE6', '#ECEEF2'];
+
+function inkOn(hex) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+  const lum = (0.2126*r + 0.7152*g + 0.0722*b) / 255;
+  return lum > 0.55 ? '#1A1C10' : '#FFFFFF';
+}
+
+const TWEAK_DEFAULTS = {
+  accent:      '#D4FF4F',
+  paper:       '#ECEEF2',
+  displayFont: 'Instrument Serif',
+  density:     'regular',
+};
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(() => {
+    const r = document.documentElement.style;
+    r.setProperty('--accent',     t.accent);
+    r.setProperty('--accent-ink', inkOn(t.accent));
+    r.setProperty('--paper',      t.paper);
+    r.setProperty('--display',    FONTS[t.displayFont] || FONTS['Instrument Serif']);
+  }, [t.accent, t.paper, t.displayFont]);
+
+  return (
+    <React.Fragment>
+      <div className="stage">
+        <DirB density={t.density} />
+      </div>
+      <TweaksPanel>
+        <TweakSection label="Accent" />
+        <TweakColor label="Highlight color" value={t.accent} options={ACCENTS} onChange={(v) => setTweak('accent', v)} />
+        <TweakSection label="Background" />
+        <TweakColor label="Paper tint" value={t.paper} options={PAPERS} onChange={(v) => setTweak('paper', v)} />
+        <TweakSection label="Type" />
+        <TweakSelect label="Display serif" value={t.displayFont} options={Object.keys(FONTS)} onChange={(v) => setTweak('displayFont', v)} />
+        <TweakSection label="Layout" />
+        <TweakRadio label="Density" value={t.density} options={['compact','regular','spread']} onChange={(v) => setTweak('density', v)} />
+      </TweaksPanel>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
