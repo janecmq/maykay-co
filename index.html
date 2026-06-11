@@ -8,7 +8,7 @@
 <meta property="og:title" content="maykay.co — jane chang" />
 <meta property="og:description" content="innovation lead by day, vibe coder by night. little AI experiments." />
 <meta property="og:type" content="website" />
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23F1EDE2'/><circle cx='32' cy='32' r='13' fill='%23D4FF4F'/></svg>" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><g fill='none' stroke='%23D4FF4F' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='2' x2='12' y2='22'/><line x1='2' y1='12' x2='22' y2='12'/><line x1='4.5' y1='4.5' x2='19.5' y2='19.5'/><line x1='19.5' y1='4.5' x2='4.5' y2='19.5'/></g></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Serif+Display:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -142,6 +142,7 @@ html, body { margin: 0; padding: 0; height: 100%; background: var(--paper, #ECEE
   box-shadow: 0 1px 2px rgba(26,24,19,.05), 0 26px 46px -16px rgba(26,24,19,.32);
   z-index: 40;
 }
+.exp-pos:has(.exp-card:hover) { z-index: 50; }
 .exp-card.tint-peach { background: var(--tint-peach); }
 .exp-card.tint-sky   { background: var(--tint-sky); }
 .exp-card.tint-lime  { background: color-mix(in oklab, var(--accent) 42%, var(--card)); }
@@ -972,8 +973,8 @@ function DirB({ density = 'regular' }) {
 
       {/* headline */}
       <div data-depth="0.4" style={{ position: 'absolute', left: 0, right: 0, top: '14%', textAlign: 'center', zIndex: 20, padding: '0 6%' }}>
-        <h1 className="statement" style={{ fontSize: 'clamp(30px,3.8vw,52px)', lineHeight: 1.18, maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>
-          hi, i'm <strong>jane</strong> / <span className="uline" style={{ position: 'relative' }}><em>maykay</em><ULine /></span> (美琪)
+        <h1 className="statement" style={{ fontSize: 'clamp(30px,3.8vw,52px)', lineHeight: 1.18, maxWidth: 880, marginLeft: 'auto', marginRight: 'auto' }}>
+          hi, i'm <strong>jane</strong> / <span className="uline" style={{ position: 'relative' }}><em>maykay</em><ULine /></span> (美琪).
           <Doodle kind="star4" size={22} accent twinkle style={{ position: 'static', display: 'inline-block', verticalAlign: 'super', marginLeft: 6 }} />
           <br />
           innovation lead by day. full-time mom. i vibe code little experiments after my toddler goes to bed.
@@ -1112,5 +1113,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
